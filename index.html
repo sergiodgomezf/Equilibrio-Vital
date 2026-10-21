@@ -3,6 +3,27 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- PWA & Mobile Web App Manifest -->
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+  <link rel="apple-touch-icon" href="icon-192.png">
+  <meta name="theme-color" content="#0f172a" id="metaThemeColor">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="TS_SergDVD">
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js').then(reg => {
+          console.log('SW registrado con éxito:', reg.scope);
+        }).catch(err => {
+          console.warn('Error registrando SW:', err);
+        });
+      });
+    }
+  </script>
+
   <title>TS_SergDVD · Seguimiento de Hábitos, Objetivos y Equilibrio Vital</title>
   <script src="https://cdn.tailwindcss.com/3.4.17"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -54,6 +75,65 @@
       scroll-margin-top: 110px;
       scroll-margin-bottom: 64px;
     }
+    
+    /* --- TEMAS VISUALES: GRIS AZULADO (MATERIAL DARK), CLARO Y OLED --- */
+    body.theme-slate {
+      background-color: #0f172a !important; /* Gris azulado profundo */
+      color: #f1f5f9 !important;
+    }
+    body.theme-slate main section div.bg-white,
+    body.theme-slate main section article.bg-white,
+    body.theme-slate footer.bg-white,
+    body.theme-slate #appModalOverlay > div {
+      background-color: #1e293b !important; /* Tarjeta elevada Material */
+      color: #f8fafc !important;
+      border-color: #334155 !important;
+      box-shadow: 0 4px 12px -2px rgba(0, 0, 0, 0.4) !important;
+    }
+    body.theme-slate .bg-slate-50,
+    body.theme-slate .bg-slate-100 {
+      background-color: #131d31 !important;
+      color: #f1f5f9 !important;
+      border-color: #334155 !important;
+    }
+    body.theme-slate .text-slate-900,
+    body.theme-slate .text-slate-800 {
+      color: #f8fafc !important;
+    }
+    body.theme-slate .text-slate-700,
+    body.theme-slate .text-slate-600 {
+      color: #cbd5e1 !important;
+    }
+    body.theme-slate .text-slate-500 {
+      color: #94a3b8 !important;
+    }
+    body.theme-slate input,
+    body.theme-slate select,
+    body.theme-slate textarea {
+      background-color: #0f172a !important;
+      color: #ffffff !important;
+      border-color: #475569 !important;
+    }
+    body.theme-slate input::placeholder,
+    body.theme-slate textarea::placeholder {
+      color: #64748b !important;
+    }
+    body.theme-slate .section-divider {
+      border-color: #334155 !important;
+    }
+
+    /* Tarjetas elevadas con división visual marcada */
+    .section-card {
+      transition: box-shadow 0.2s ease, border-color 0.2s ease;
+    }
+    .scrollbar-none::-webkit-scrollbar {
+      display: none;
+    }
+    .scrollbar-none {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+
     body.oled-high-contrast {
       background-color: #000000 !important;
       color: #f5f5f5 !important;
@@ -116,65 +196,58 @@
 <body class="min-h-screen flex flex-col bg-slate-50 text-slate-900">
 
   <!-- Barra ética y de contexto superior -->
-  <header class="bg-slate-900 text-white border-b border-slate-700 sticky top-0 z-30 shadow-sm">
-    <div class="max-w-7xl mx-auto px-3 sm:px-6 py-2.5">
-      <div class="flex flex-wrap items-center justify-between gap-2">
-        <div class="flex items-center gap-2.5">
-          <span class="inline-flex items-center justify-center w-9 h-9 rounded-lg bg-teal-600 text-white font-bold text-sm tracking-tight shadow-inner" aria-hidden="true">TS</span>
-          <div>
-            <div class="flex items-center gap-2 flex-wrap">
-              <h1 class="text-base sm:text-lg font-bold tracking-tight">TS_SergDVD · Equilibrio Vital <span class="text-xs font-extrabold px-1.5 py-0.5 rounded bg-teal-500/20 text-teal-200 border border-teal-400/40">v3.2 Local-First</span></h1>
-              <span class="text-xs px-2 py-0.5 rounded-full bg-slate-800 text-teal-300 border border-teal-700 font-medium">Sergio David Gómez Florián</span>
-              <span id="badgeDataMode" class="text-xs px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-200 border border-amber-400/40 font-semibold">Modo Demostración</span>
-              <button id="badgeStoragePersist" type="button" data-action="request-storage-persist" class="text-xs px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-200 border border-emerald-400/40 font-semibold hover:bg-emerald-500/30 transition-colors" title="Protección W3C (navigator.storage.persist) contra purgas automáticas de datos en navegadores móviles">🛡️ Blindaje Móvil: Verificando</button>
-            </div>
-            <p class="text-xs text-slate-300 hidden sm:block">Neiba, Bahoruco, RD (America/Santo_Domingo · Lun-Dom) · Planificación flexible y evaluación participativa</p>
+    <!-- Barra de navegación compacta y ergonómica estilo Material Design 3 -->
+  <header class="bg-slate-900/95 text-white border-b border-slate-700/80 sticky top-0 z-40 backdrop-blur-md shadow-md">
+    <div class="max-w-7xl mx-auto px-3 sm:px-6 py-2">
+      <div class="flex items-center justify-between gap-2">
+        <!-- Logo y título compacto -->
+        <div class="flex items-center gap-2">
+          <span class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-teal-600 text-white font-bold text-xs tracking-tight shadow-inner" aria-hidden="true">TS</span>
+          <div class="flex items-center gap-1.5 flex-wrap">
+            <h1 class="text-sm sm:text-base font-bold tracking-tight text-white flex items-center gap-1.5">
+              <span>TS_SergDVD</span>
+              <span class="hidden sm:inline font-normal text-slate-300">· Equilibrio Vital</span>
+              <span class="text-[10px] font-extrabold px-1.5 py-0.5 rounded bg-teal-500/20 text-teal-300 border border-teal-400/40">v3.3</span>
+            </h1>
+            <button id="badgeDataMode" type="button" data-action="quick-toggle-mode" class="tap-target text-[11px] px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-200 border border-amber-400/40 font-semibold hover:bg-amber-500/30 transition-colors" title="Clic para alternar entre Modo Demostración y Mis Datos Reales">🧪 Demo</button>
           </div>
         </div>
 
-        <!-- Controles globales rápidos: Modo Baja Energía, Conmutador Demo/Real y Selector de Fecha -->
-        <div class="flex items-center flex-wrap gap-2">
-          <button id="btnToggleOledMode" type="button" data-action="toggle-oled-mode" class="tap-target inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-semibold border transition-colors bg-slate-800 border-slate-600 text-slate-100 hover:bg-slate-700" aria-pressed="false" title="Modo de Alto Contraste OLED (#000000 / #F5F5F5 · WCAG 2.2 AAA) para lectura bajo sol directo o ahorro energético en campo">
-            <span id="oledModeIcon" aria-hidden="true">🌑</span>
-            <span id="oledModeLabel">OLED Campo</span>
-          </button>
+        <!-- Controles globales compactos (Dropdowns / Acciones Rápidas) -->
+        <div class="flex items-center gap-1.5 sm:gap-2">
+          <!-- Selector de Tema (Gris Azulado / Claro / OLED) -->
+          <div class="relative">
+            <button id="btnThemeMenu" type="button" data-action="cycle-theme" class="tap-target inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-semibold border transition-colors bg-slate-800 border-slate-600 text-slate-100 hover:bg-slate-700" title="Cambiar tema: Gris Azulado (Material Dark) / Claro / OLED Campo">
+              <span id="themeMenuIcon">🌙</span>
+              <span id="themeMenuLabel" class="hidden sm:inline">Gris Azulado</span>
+            </button>
+          </div>
 
-          <button id="btnToggleLowEnergy" type="button" class="tap-target inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold border transition-colors bg-slate-800 border-slate-600 text-slate-100 hover:bg-slate-700" aria-pressed="false" title="Muestra versiones mínimas acordadas sin borrar metas originales ni alterar registros pasados">
+          <!-- Selector de Energía Rápido -->
+          <button id="btnToggleLowEnergy" type="button" class="tap-target inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-semibold border transition-colors bg-slate-800 border-slate-600 text-slate-100 hover:bg-slate-700" aria-pressed="false" title="Muestra versiones mínimas acordadas sin borrar metas originales ni alterar registros pasados">
             <span id="lowEnergyIcon" aria-hidden="true">⚡</span>
-            <span id="lowEnergyLabel">Energía: Estándar</span>
+            <span id="lowEnergyLabel" class="hidden sm:inline">Estándar</span>
           </button>
 
-          <button id="btnSwitchModeQuick" type="button" class="tap-target inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-teal-700 hover:bg-teal-600 text-white border border-teal-500 transition-colors" title="Alternar entre los datos de demostración y tu espacio personal limpio">
-            <span id="switchModeLabel">Cambiar a Mis Datos Reales</span>
+          <!-- Botón de Información, Principio Ético y Configuración Rápida -->
+          <button id="btnOpenSystemInfoModal" type="button" data-action="open-system-info-modal" class="tap-target inline-flex items-center justify-center w-8 h-8 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-600 text-slate-200 text-sm font-bold transition-colors" title="Información del sistema, principio ético permanente, blindaje W3C y fecha activa">
+            <span>ℹ️</span>
           </button>
-
-          <div class="flex items-center gap-1 bg-slate-800 border border-slate-700 rounded-lg px-2 py-1">
-            <label for="globalDateInput" class="text-xs text-slate-300 font-medium">Fecha activa:</label>
-            <input id="globalDateInput" type="date" class="bg-transparent text-white text-xs font-semibold focus:outline-none" />
-          </div>
         </div>
-      </div>
-
-      <!-- Recordatorio ético permanente -->
-      <div class="mt-2 pt-1.5 border-t border-slate-800 flex flex-wrap items-center justify-between gap-2 text-xs text-slate-300">
-        <p class="flex items-center gap-1.5">
-          <span aria-hidden="true">🧭</span>
-          <span><strong>Principio ético:</strong> Los indicadores son herramientas de reflexión; no representan tu valor personal ni miden por sí solos tu bienestar, tu fe o la calidad de tus vínculos.</span>
-        </p>
-        <span id="transversalSummaryChip" class="text-xs font-medium text-teal-300"></span>
       </div>
     </div>
 
-    <!-- Navegación de las 7 vistas -->
+    <!-- Navegación por pestañas deslizable con scroll suave táctil (sin apilamiento en móvil) -->
     <nav aria-label="Navegación principal" class="bg-slate-800/90 border-t border-slate-700/80">
-      <div class="max-w-7xl mx-auto px-2 sm:px-6 flex items-center gap-1 overflow-x-auto py-1">
-        <button type="button" data-nav="hoy" class="nav-tab tap-target px-3 py-1.5 rounded-md text-xs sm:text-sm font-semibold whitespace-nowrap transition-colors bg-teal-600 text-white">1. Hoy</button>
-        <button type="button" data-nav="semana" class="nav-tab tap-target px-3 py-1.5 rounded-md text-xs sm:text-sm font-semibold whitespace-nowrap transition-colors text-slate-200 hover:bg-slate-700">2. Semana</button>
-        <button type="button" data-nav="dimensiones" class="nav-tab tap-target px-3 py-1.5 rounded-md text-xs sm:text-sm font-semibold whitespace-nowrap transition-colors text-slate-200 hover:bg-slate-700">3. Dimensiones de vida</button>
-        <button type="button" data-nav="habitos" class="nav-tab tap-target px-3 py-1.5 rounded-md text-xs sm:text-sm font-semibold whitespace-nowrap transition-colors text-slate-200 hover:bg-slate-700">4. Hábitos y proyectos</button>
-        <button type="button" data-nav="diario" class="nav-tab tap-target px-3 py-1.5 rounded-md text-xs sm:text-sm font-semibold whitespace-nowrap transition-colors text-slate-200 hover:bg-slate-700">5. Diario reflexivo</button>
-        <button type="button" data-nav="revision" class="nav-tab tap-target px-3 py-1.5 rounded-md text-xs sm:text-sm font-semibold whitespace-nowrap transition-colors text-slate-200 hover:bg-slate-700">6. Revisión semanal</button>
-        <button type="button" data-nav="configuracion" class="nav-tab tap-target px-3 py-1.5 rounded-md text-xs sm:text-sm font-semibold whitespace-nowrap transition-colors text-slate-200 hover:bg-slate-700">7. Configuración y respaldo</button>
+      <div class="max-w-7xl mx-auto px-2 sm:px-6 flex items-center gap-1.5 overflow-x-auto whitespace-nowrap scrollbar-none py-1.5" style="scrollbar-width: none; -webkit-overflow-scrolling: touch;">
+        <button type="button" data-nav="hoy" class="nav-tab tap-target flex-shrink-0 px-3 py-1.5 rounded-lg text-xs sm:text-sm font-semibold whitespace-nowrap transition-all bg-teal-600 text-white shadow-sm">1. Hoy</button>
+        <button type="button" data-nav="semana" class="nav-tab tap-target flex-shrink-0 px-3 py-1.5 rounded-lg text-xs sm:text-sm font-semibold whitespace-nowrap transition-all text-slate-200 hover:bg-slate-700">2. Semana</button>
+        <button type="button" data-nav="dimensiones" class="nav-tab tap-target flex-shrink-0 px-3 py-1.5 rounded-lg text-xs sm:text-sm font-semibold whitespace-nowrap transition-all text-slate-200 hover:bg-slate-700">3. Dimensiones de vida</button>
+        <button type="button" data-nav="habitos" class="nav-tab tap-target flex-shrink-0 px-3 py-1.5 rounded-lg text-xs sm:text-sm font-semibold whitespace-nowrap transition-all text-slate-200 hover:bg-slate-700">4. Hábitos y proyectos</button>
+        <button type="button" data-nav="diario" class="nav-tab tap-target flex-shrink-0 px-3 py-1.5 rounded-lg text-xs sm:text-sm font-semibold whitespace-nowrap transition-all text-slate-200 hover:bg-slate-700">5. Diario reflexivo</button>
+        <button type="button" data-nav="revision" class="nav-tab tap-target flex-shrink-0 px-3 py-1.5 rounded-lg text-xs sm:text-sm font-semibold whitespace-nowrap transition-all text-slate-200 hover:bg-slate-700">6. Revisión semanal</button>
+        <button type="button" data-nav="configuracion" class="nav-tab tap-target flex-shrink-0 px-3 py-1.5 rounded-lg text-xs sm:text-sm font-semibold whitespace-nowrap transition-all text-slate-200 hover:bg-slate-700">7. Configuración</button>
+        <button type="button" data-nav="instrucciones" class="nav-tab tap-target flex-shrink-0 px-3 py-1.5 rounded-lg text-xs sm:text-sm font-semibold whitespace-nowrap transition-all text-amber-200 hover:bg-slate-700 border border-amber-400/30">📖 8. Guía e Instrucciones</button>
       </div>
     </nav>
   </header>
@@ -195,6 +268,7 @@
     <section id="view-diario" class="view-section hidden space-y-5" aria-label="Vista Diario reflexivo"></section>
     <section id="view-revision" class="view-section hidden space-y-5" aria-label="Vista Revisión semanal"></section>
     <section id="view-configuracion" class="view-section hidden space-y-5" aria-label="Vista Configuración y respaldo"></section>
+    <section id="view-instrucciones" class="view-section hidden space-y-6" aria-label="Vista Guía e Instrucciones"></section>
   </main>
 
   <!-- Modal Universal en página (para formularios, transiciones de proyecto, confirmaciones y explicaciones) -->
@@ -1526,6 +1600,7 @@ Sin optimismo ingenuo ni catastrofismo, y marcá qué supuestos estás usando en
           : `🛡️ Solicitud W3C enviada al navegador (${storageQuotaSummary}). Para blindaje total en móvil, instala la app en Pantalla de Inicio.`);
       }
       if (currentView === 'configuracion') renderConfiguracionView();
+      renderInstruccionesView();
       return storagePersistGranted;
     }
 
@@ -4530,7 +4605,373 @@ Sin optimismo ingenuo ni catastrofismo, y marcá qué supuestos estás usando en
           sec.classList.add('hidden');
         }
       });
+      initTheme();
       renderAll();
+    }
+
+    
+    // --- ESTADO Y GESTIÓN DE TEMAS (GRIS AZULADO / CLARO / OLED) ---
+    function initTheme() {
+      const savedTheme = appState.settings.uiTheme || (appState.settings.oledHighContrast ? 'oled' : 'slate');
+      applyTheme(savedTheme, false);
+    }
+
+    function applyTheme(themeName, save = true) {
+      document.body.classList.remove('theme-slate', 'theme-light', 'oled-high-contrast');
+      const metaTheme = document.getElementById('metaThemeColor');
+      const iconEl = document.getElementById('themeMenuIcon');
+      const labelEl = document.getElementById('themeMenuLabel');
+
+      if (themeName === 'light') {
+        document.body.classList.add('theme-light');
+        if (metaTheme) metaTheme.setAttribute('content', '#f8fafc');
+        if (iconEl) iconEl.textContent = '☀️';
+        if (labelEl) labelEl.textContent = 'Claro';
+        appState.settings.uiTheme = 'light';
+        appState.settings.oledHighContrast = false;
+      } else if (themeName === 'oled') {
+        document.body.classList.add('oled-high-contrast');
+        if (metaTheme) metaTheme.setAttribute('content', '#000000');
+        if (iconEl) iconEl.textContent = '🌑';
+        if (labelEl) labelEl.textContent = 'OLED Campo';
+        appState.settings.uiTheme = 'oled';
+        appState.settings.oledHighContrast = true;
+      } else {
+        // Slate por defecto (Gris Azulado / Material Dark)
+        document.body.classList.add('theme-slate');
+        if (metaTheme) metaTheme.setAttribute('content', '#0f172a');
+        if (iconEl) iconEl.textContent = '🌙';
+        if (labelEl) labelEl.textContent = 'Gris Azulado';
+        appState.settings.uiTheme = 'slate';
+        appState.settings.oledHighContrast = false;
+      }
+
+      if (save) {
+        saveAppState('THEME_CHANGED', `Tema cambiado a ${themeName}`);
+      }
+    }
+
+    function cycleTheme() {
+      const current = appState.settings.uiTheme || 'slate';
+      if (current === 'slate') {
+        applyTheme('light');
+        showToast('☀️ Tema Claro Institucional activado.');
+      } else if (current === 'light') {
+        applyTheme('oled');
+        showToast('🌑 Modo Alto Contraste OLED (#000000) activado.');
+      } else {
+        applyTheme('slate');
+        showToast('🌙 Tema Gris Azulado (Material Dark) activado.');
+      }
+    }
+
+    // Modal de Información del Sistema, Principio Ético y Blindaje W3C
+    function openSystemInfoModal() {
+      const isPersisted = Boolean(appState.settings.storagePersisted);
+      const isLow = Boolean(appState.settings.lowEnergyMode);
+      const bienMetrics = computeDimensionMetrics('bienestar', selectedWeekMonday);
+      
+      openModal('Contexto Institucional, Ética y Ajustes Rápidos', `
+        <div class="space-y-4 text-xs sm:text-sm">
+          <!-- Principio ético permanente -->
+          <div class="p-3.5 rounded-xl bg-teal-900/30 border border-teal-500/40 text-teal-100">
+            <div class="font-bold text-teal-300 text-sm flex items-center gap-1.5 mb-1">
+              <span>🧭</span>
+              <span>Principio Ético Central</span>
+            </div>
+            <p>Los indicadores cuantitativos son exclusivamente herramientas descriptivas de reflexión; no representan tu valor personal, ni miden por sí solos tu bienestar, tu fe, tu espiritualidad o la calidad de tus vínculos.</p>
+          </div>
+
+          <!-- Titular y Contexto Territorial -->
+          <div class="p-3.5 rounded-xl bg-slate-800/80 border border-slate-700/80 space-y-1.5">
+            <div class="font-bold text-slate-100 flex items-center justify-between">
+              <span>Sergio David Gómez Florián (TS_SergDVD)</span>
+              <span class="text-xs px-2 py-0.5 rounded bg-slate-700 text-slate-300">v3.3 Local-First</span>
+            </div>
+            <p class="text-slate-300">Neiba, Provincia Bahoruco, República Dominicana · Zona Horaria America/Santo_Domingo · Semana Lunes a Domingo.</p>
+            <div class="pt-1 text-slate-400">
+              🌿 Bienestar y Descanso: <strong>Avance ${formatMetricOrInsufficient(bienMetrics.confirmedAdvanceOverPlannedPct)}</strong>
+            </div>
+          </div>
+
+          <!-- Selector de Fecha Activa y Modo de Datos -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div class="p-3 rounded-xl bg-slate-800/60 border border-slate-700">
+              <label class="block font-bold text-slate-200 mb-1">Fecha Activa de Registro:</label>
+              <input id="modalDateInput" type="date" value="${appState.settings.activeDate}" class="w-full px-2.5 py-1.5 rounded-lg border border-slate-600 bg-slate-900 text-white font-semibold focus:outline-none" />
+            </div>
+            <div class="p-3 rounded-xl bg-slate-800/60 border border-slate-700 flex flex-col justify-between">
+              <div>
+                <span class="block font-bold text-slate-200 mb-0.5">Espacio de Datos:</span>
+                <span class="text-xs text-slate-400">Actualmente en: <strong>${currentMode === 'demo' ? 'Modo Demostración' : 'Mis Datos Reales'}</strong></span>
+              </div>
+              <button type="button" data-action="quick-toggle-mode" class="mt-2 w-full px-3 py-1.5 rounded-lg bg-teal-700 hover:bg-teal-600 text-white font-bold text-xs transition-colors">
+                ${currentMode === 'demo' ? 'Pasar a Mis Datos Reales' : 'Ver Modo Demostración'}
+              </button>
+            </div>
+          </div>
+
+          <!-- Blindaje W3C y Persistencia de Almacenamiento -->
+          <div class="p-3.5 rounded-xl bg-slate-800/80 border border-slate-700/80 flex items-center justify-between gap-3">
+            <div>
+              <div class="font-bold text-slate-100 flex items-center gap-1.5">
+                <span>🛡️</span>
+                <span>Blindaje Móvil W3C (navigator.storage.persist)</span>
+              </div>
+              <p class="text-slate-400 text-xs">Protege la base de datos IndexedDB local contra purgas automáticas del navegador móvil en Android/iOS.</p>
+            </div>
+            <button type="button" data-action="request-storage-persist" class="px-3 py-1.5 rounded-lg font-bold text-xs ${isPersisted ? 'bg-emerald-600 text-white' : 'bg-slate-700 hover:bg-slate-600 text-slate-200'}">
+              ${isPersisted ? '✓ Blindado' : 'Solicitar'}
+            </button>
+          </div>
+        </div>
+      `);
+
+      const mDate = document.getElementById('modalDateInput');
+      if (mDate) {
+        mDate.addEventListener('change', (e) => {
+          if (e.target.value) {
+            appState.settings.activeDate = e.target.value;
+            saveAppState('DATE_CHANGED', `Fecha activa cambiada a ${e.target.value}`);
+            renderAll();
+            closeModal();
+            showToast(`Fecha activa cambiada a ${e.target.value}`);
+          }
+        });
+      }
+    }
+
+    // --- PESTAÑA 8: GUÍA INTERACTIVA, INSTRUCCIONES Y RECURSOS MULTIMEDIA ---
+    let currentSlideIndex = 0;
+    const guideSlides = [
+      {
+        title: "1. Filosofía, Ética y Trabajo Social Crítico en Neiba",
+        icon: "🧭",
+        summary: "Plataforma sociotécnica situada que erradica la gamificación punitiva y los juicios de valor.",
+        bullets: [
+          "Diseñada a la medida del Suroeste dominicano (Neiba, Bahoruco), respetando los tiempos comunitarios.",
+          "Cero punición moral: si un día no se registra o no se cumple, nunca se asume como falta individual de voluntad.",
+          "Distinción ética fundamental entre el Tiempo Mecánico-Operativo (optimizable) y el Tiempo Relacional (escucha comunitaria protegida).",
+          "Separación entre obligaciones institucionales (lunes a viernes, sábado libre) y proyectos de iniciativa propia."
+        ]
+      },
+      {
+        title: "2. Matemáticas No Punitivas: Asistencia vs. Rendimiento y Rachas Elásticas (M_t)",
+        icon: "🌊",
+        summary: "La continuidad de la identidad nunca cae a cero gracias al decaimiento exponencial atenuado.",
+        bullets: [
+          "Métrica de presencia continua: Registrar una simple marca (X) sostiene el hábito por encima del récord deportivo.",
+          "Piso Mínimo Innegociable: la versión atómica de 5-15 min que se cumple aun en semanas de alta demanda o crisis.",
+          "Fórmula de Impulso Elástico Mt: una ausencia puntual contrae el impulso elásticamente (ej. de 100% a ~90.5%), eliminando el efecto de abandono catastrófico.",
+          "Escala de 4 niveles: Cumplido (1.0), Mínimo Innegociable (0.5), Pausa Justificada (0.2) y Omisión (0.0)."
+        ]
+      },
+      {
+        title: "3. La Semana que Funciona: Bloques de Alto Impacto y Colchones Territoriales",
+        icon: "📅",
+        summary: "Estructura táctica del Doc 42 adaptada a la realidad comunitaria de Bahoruco.",
+        bullets: [
+          "El Plan del Lunes en 10-12 min: fijar el objetivo mensual, volcar pendientes y definir qué se saca de la agenda.",
+          "3 Bloques de 90 minutos: trabajo sustantivo y profundo en horas de mayor energía biológica.",
+          "2 Bloques de 45 minutos: correspondencia, trámites administrativos y respuestas rápidas.",
+          "2 Huecos libres obligatorios: colchón de contingencia para imprevistos climáticos, eléctricos o comunitarios en Neiba."
+        ]
+      },
+      {
+        title: "4. Desbloqueo Atómico en 15 Minutos y Evaluación de Decisiones (Pre-Mortem)",
+        icon: "⚡",
+        summary: "Herramientas de ingeniería inversa para destrabar la parálisis por miedo o ambigüedad.",
+        bullets: [
+          "La procrastinación no es pereza: se posterga lo que da miedo, lo mal definido o lo que carece de paso inicial accesible.",
+          "Temporizador de 15 Minutos con aislamiento del teléfono en otra habitación y anotación del punto de reinicio.",
+          "Regla de las 3 Postergaciones: si una tarea se pospone tres veces consecutivas, se ejecuta hoy en 15 min o se elimina sin culpa.",
+          "Análisis Pre-Mortem (Doc 48): anticipar las 5 formas más probables en que un proyecto puede fallar antes de iniciarlo."
+        ]
+      },
+      {
+        title: "5. Soberanía de Datos, Criptografía Militar y Sincronización P2P",
+        icon: "🛡️",
+        summary: "Arquitectura 100% Local-First que garantiza el secreto profesional y la independencia técnica.",
+        bullets: [
+          "Tus datos jamás se transmiten a servidores externos ni se usan para alimentar modelos de terceros.",
+          "Persistencia en IndexedDB asíncrono con Log de Eventos Append-Only y snapshots periódicos.",
+          "Cifrado simétrico AES-GCM de 256 bits mediante Web Crypto API para exportar bóvedas seguras (.tsvault.json).",
+          "Sanitizador NER Local que anonimiza automáticamente cédulas, teléfonos y nombres de familias antes de copiar prompts."
+        ]
+      }
+    ];
+
+    function renderInstruccionesView() {
+      const container = document.getElementById('view-instrucciones');
+      if (!container) return;
+
+      const slide = guideSlides[currentSlideIndex];
+
+      container.innerHTML = `
+        <!-- Encabezado de la Guía -->
+        <div class="section-card bg-slate-800/90 rounded-2xl border border-slate-700/80 shadow-md p-4 sm:p-6 space-y-2">
+          <div class="flex items-center gap-3">
+            <span class="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-amber-500/20 text-amber-300 border border-amber-400/30 text-xl font-bold">📖</span>
+            <div>
+              <h2 class="text-lg sm:text-xl font-bold text-slate-100">Guía Interactiva, Instrucciones y Recursos Multimedia</h2>
+              <p class="text-xs sm:text-sm text-slate-300">Aprende a dominar el ecosistema TS_SergDVD Equilibrio Vital con la presentación conceptual, la guía escrita y el cuaderno de Gemini Notebook.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- 1. PRESENTACIÓN INTERACTIVA (CARRUSEL DE DIAPOSITIVAS) -->
+        <div class="section-card bg-slate-800/90 rounded-2xl border border-slate-700/80 shadow-md p-4 sm:p-6 space-y-4">
+          <div class="flex items-center justify-between border-b border-slate-700/60 pb-3">
+            <div class="flex items-center gap-2">
+              <span class="text-amber-400 text-lg">📽️</span>
+              <h3 class="text-base sm:text-lg font-bold text-slate-100">Presentación Conceptual Interactiva</h3>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="text-xs font-bold px-2 py-1 rounded-md bg-slate-700 text-amber-300 border border-slate-600">Lámina ${currentSlideIndex + 1} de ${guideSlides.length}</span>
+            </div>
+          </div>
+
+          <!-- Marco de la Diapositiva Activa -->
+          <div class="rounded-xl bg-slate-900/90 border border-slate-700 p-5 sm:p-7 space-y-4 shadow-inner min-h-[220px]">
+            <div class="flex items-center gap-3">
+              <span class="text-3xl">${slide.icon}</span>
+              <div>
+                <h4 class="text-base sm:text-lg font-bold text-teal-300">${slide.title}</h4>
+                <p class="text-xs sm:text-sm text-slate-300 font-medium">${slide.summary}</p>
+              </div>
+            </div>
+            <ul class="space-y-2.5 pt-2 text-xs sm:text-sm text-slate-200">
+              ${slide.bullets.map(b => `<li class="flex items-start gap-2"><span class="text-teal-400 mt-0.5">✔</span><span>${b}</span></li>`).join('')}
+            </ul>
+          </div>
+
+          <!-- Controles de Navegación de la Presentación -->
+          <div class="flex items-center justify-between gap-2 pt-2">
+            <button type="button" data-action="prev-guide-slide" class="tap-target px-3 py-1.5 rounded-lg bg-slate-700 hover:bg-slate-600 text-slate-100 text-xs sm:text-sm font-semibold transition-colors flex items-center gap-1.5" ${currentSlideIndex === 0 ? 'disabled opacity-50 cursor-not-allowed' : ''}>
+              <span>◀ Anterior</span>
+            </button>
+
+            <!-- Indicadores circulares de diapositiva -->
+            <div class="flex items-center gap-1.5">
+              ${guideSlides.map((_, idx) => `
+                <button type="button" data-action="go-to-guide-slide" data-slide-idx="${idx}" class="w-3 h-3 rounded-full transition-all ${idx === currentSlideIndex ? 'bg-amber-400 scale-125' : 'bg-slate-600 hover:bg-slate-500'}" title="Ir a diapositiva ${idx + 1}"></button>
+              `).join('')}
+            </div>
+
+            <button type="button" data-action="next-guide-slide" class="tap-target px-3 py-1.5 rounded-lg bg-teal-600 hover:bg-teal-500 text-white text-xs sm:text-sm font-semibold transition-colors flex items-center gap-1.5" ${currentSlideIndex === guideSlides.length - 1 ? 'disabled opacity-50 cursor-not-allowed' : ''}>
+              <span>Siguiente ▶</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- 2. VIDEO TUTORIAL & CUADERNO DE GEMINI NOTEBOOK -->
+        <div class="section-card bg-slate-800/90 rounded-2xl border border-slate-700/80 shadow-md p-4 sm:p-6 space-y-4">
+          <div class="border-b border-slate-700/60 pb-3 flex items-center gap-2">
+            <span class="text-blue-400 text-lg">🎬</span>
+            <h3 class="text-base sm:text-lg font-bold text-slate-100">Video Tutorial y Cuaderno de Gemini Notebook</h3>
+          </div>
+
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-5 items-start">
+            <!-- Marco de Reproducción Multimedia / Video Explicativo -->
+            <div class="rounded-xl overflow-hidden bg-slate-900 border border-slate-700 shadow-md">
+              <div class="aspect-video bg-slate-950 flex flex-col items-center justify-center p-6 text-center relative group">
+                <!-- Poster e interfaz de reproducción interactiva -->
+                <div class="w-16 h-16 rounded-full bg-teal-600/90 hover:bg-teal-500 text-white flex items-center justify-center shadow-lg transition-transform group-hover:scale-110 cursor-pointer" onclick="showToast('El video tutorial completo está disponible dentro del cuaderno de Gemini Notebook.');">
+                  <span class="text-2xl ml-1">▶</span>
+                </div>
+                <div class="mt-4 space-y-1">
+                  <div class="text-sm font-bold text-slate-100">Video Tutorial: Dominando TS_SergDVD v3.3</div>
+                  <p class="text-xs text-slate-400">Recorrido por las 7 vistas operativas, el Plan del Lunes y la Sincronización P2P.</p>
+                </div>
+                <div class="absolute bottom-2 right-2 text-[10px] px-2 py-0.5 rounded bg-slate-800/80 text-slate-300 border border-slate-700">Duración: 12 min</div>
+              </div>
+            </div>
+
+            <!-- Integración con Cuaderno de Gemini Notebook -->
+            <div class="p-4 rounded-xl bg-slate-900/60 border border-slate-700 space-y-3">
+              <div class="flex items-center justify-between">
+                <span class="font-bold text-blue-300 text-sm flex items-center gap-1.5">
+                  <span>📓</span>
+                  <span>Cuaderno Gemini Notebook</span>
+                </span>
+                <span class="text-[10px] px-2 py-0.5 rounded-full bg-blue-500/20 text-blue-200 border border-blue-400/40 font-bold">Asistente IA</span>
+              </div>
+              <p class="text-xs text-slate-300">
+                Puedes complementar tu planificación conectando este sistema con tu cuaderno en <strong>Gemini Notebook</strong>, el cual contiene las transcripciones completas de Código Maestría y los antecedentes de Neiba.
+              </p>
+              
+              <!-- Master Prompt para el Cuaderno -->
+              <div class="space-y-1.5">
+                <label class="block font-bold text-slate-200 text-xs">Master Prompt para Acompañamiento en el Cuaderno:</label>
+                <div class="relative">
+                  <textarea id="notebookPromptBox" readonly class="w-full h-24 p-2.5 rounded-lg bg-slate-950 border border-slate-700 text-xs text-slate-300 font-mono resize-none focus:outline-none">Eres mi asistente de Trabajo Social y Educación Popular en TS_SergDVD. Utiliza las fuentes cargadas de Código Maestría (Docs 42, 48, 49, 53) y mi contexto en Neiba, Bahoruco. Revisa mis datos semanales de hábitos y proyectos sin felicitarme ni juzgarme moralmente: 1) qué se cumplió y qué no, 2) en qué se fue el tiempo no planificado, 3) qué patrón se repite y 4) cuál es el único ajuste para la próxima semana respetando mi Mínimo Innegociable.</textarea>
+                  <button type="button" data-action="copy-notebook-prompt" class="absolute top-2 right-2 px-2 py-1 rounded bg-teal-700 hover:bg-teal-600 text-white font-bold text-[11px] shadow transition-colors">Copiar</button>
+                </div>
+              </div>
+
+              <div class="pt-1">
+                <a href="https://notebooklm.google.com/" target="_blank" rel="noopener noreferrer" class="tap-target inline-flex items-center justify-center gap-1.5 w-full px-3 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold shadow transition-colors">
+                  <span>Abrir Gemini NotebookLM ↗</span>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3. GUÍA ESCRITA PASO A PASO (MÓDULOS DE USO PRÁCTICO) -->
+        <div class="section-card bg-slate-800/90 rounded-2xl border border-slate-700/80 shadow-md p-4 sm:p-6 space-y-4">
+          <div class="border-b border-slate-700/60 pb-3 flex items-center gap-2">
+            <span class="text-emerald-400 text-lg">📝</span>
+            <h3 class="text-base sm:text-lg font-bold text-slate-100">Guía Escrita Paso a Paso (Tutorial Operativo)</h3>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <!-- Módulo 1 -->
+            <div class="p-4 rounded-xl bg-slate-900/60 border border-slate-700 space-y-2">
+              <div class="font-bold text-teal-300 text-sm flex items-center gap-2">
+                <span class="w-5 h-5 rounded-full bg-teal-500/20 text-teal-300 text-xs inline-flex items-center justify-center font-bold">1</span>
+                <span>Arranque en Modo Demostración vs. Mis Datos Reales</span>
+              </div>
+              <p class="text-xs text-slate-300">
+                La aplicación inicia por defecto en <strong>Modo Demostración</strong> para que puedas explorar todas las funciones sin temor. Cuando estés listo, pulsa el botón <strong>«🧪 Demo»</strong> en la cabecera para conmutar a <strong>«Mis Datos Reales»</strong>. Tus datos reales se guardan en un almacén aislado y nunca se mezclan con las pruebas.
+              </p>
+            </div>
+
+            <!-- Módulo 2 -->
+            <div class="p-4 rounded-xl bg-slate-900/60 border border-slate-700 space-y-2">
+              <div class="font-bold text-teal-300 text-sm flex items-center gap-2">
+                <span class="w-5 h-5 rounded-full bg-teal-500/20 text-teal-300 text-xs inline-flex items-center justify-center font-bold">2</span>
+                <span>El Plan del Lunes y Registro Diario</span>
+              </div>
+              <p class="text-xs text-slate-300">
+                En la pestaña <strong>2. Semana</strong>, utiliza el formulario del lunes para estructurar 3 bloques de 90 min (trabajo sustantivo) y 2 colchones de contingencia. En la vista <strong>1. Hoy</strong>, marca la <em>Única tarea que justifica el día</em> y registra tus hábitos tocando directamente en cada tarjeta.
+              </p>
+            </div>
+
+            <!-- Módulo 3 -->
+            <div class="p-4 rounded-xl bg-slate-900/60 border border-slate-700 space-y-2">
+              <div class="font-bold text-teal-300 text-sm flex items-center gap-2">
+                <span class="w-5 h-5 rounded-full bg-teal-500/20 text-teal-300 text-xs inline-flex items-center justify-center font-bold">3</span>
+                <span>Qué Hacer en Días de Fatiga o Emergencia</span>
+              </div>
+              <p class="text-xs text-slate-300">
+                Si la energía baja por calor, sobrecarga de trabajo o salud, activa el <strong>Piso Mínimo Innegociable (🛡️)</strong> en los hábitos críticos o pulsa el botón <strong>⚡ Energía</strong> en la cabecera. Cumplir el mínimo suma asistencia (0.5) y protege tu impulso elástico sin castigo moral.
+              </p>
+            </div>
+
+            <!-- Módulo 4 -->
+            <div class="p-4 rounded-xl bg-slate-900/60 border border-slate-700 space-y-2">
+              <div class="font-bold text-teal-300 text-sm flex items-center gap-2">
+                <span class="w-5 h-5 rounded-full bg-teal-500/20 text-teal-300 text-xs inline-flex items-center justify-center font-bold">4</span>
+                <span>Instalar como Aplicación en Android (PWA)</span>
+              </div>
+              <p class="text-xs text-slate-300">
+                Abre la aplicación en Google Chrome en tu teléfono Android (<a href="https://sergiodgomezf.github.io/Equilibrio-Vital/" target="_blank" class="text-teal-400 underline">GitHub Pages</a>), toca los tres puntos del menú del navegador y selecciona <strong>«Instalar aplicación»</strong> o <strong>«Agregar a la pantalla principal»</strong>. Funcionará como una app nativa a pantalla completa y 100% offline.
+              </p>
+            </div>
+          </div>
+        </div>
+      `;
     }
 
     function renderAll() {
@@ -4542,6 +4983,7 @@ Sin optimismo ingenuo ni catastrofismo, y marcá qué supuestos estás usando en
       renderDiarioView();
       renderRevisionView();
       renderConfiguracionView();
+      renderInstruccionesView();
     }
 
     // Modal para registrar estado detallado, parcial con cantidad o pausa con motivo
@@ -5790,6 +6232,32 @@ Sin optimismo ingenuo ni catastrofismo, y marcá qué supuestos estás usando en
           const finalTxt = appState.settings.nerSanitizationEnabled !== false ? sanitizeTextNERLocal(raw) : raw;
           copyTextSafe(finalTxt, 'Prompt de Auditoría de Puntos Ciegos (sanitizado con NER local) copiado.');
         }
+            } else if (action === 'cycle-theme') {
+        cycleTheme();
+      } else if (action === 'open-system-info-modal') {
+        openSystemInfoModal();
+      } else if (action === 'quick-toggle-mode') {
+        switchActiveMode(currentMode === 'demo' ? 'real' : 'demo');
+      } else if (action === 'prev-guide-slide') {
+        if (currentSlideIndex > 0) {
+          currentSlideIndex--;
+          renderInstruccionesView();
+        }
+      } else if (action === 'next-guide-slide') {
+        if (currentSlideIndex < guideSlides.length - 1) {
+          currentSlideIndex++;
+          renderInstruccionesView();
+        }
+      } else if (action === 'go-to-guide-slide') {
+        const sIdx = parseInt(actionEl.getAttribute('data-slide-idx'), 10);
+        if (!isNaN(sIdx) && sIdx >= 0 && sIdx < guideSlides.length) {
+          currentSlideIndex = sIdx;
+          renderInstruccionesView();
+        }
+      } else if (action === 'copy-notebook-prompt') {
+        const box = document.getElementById('notebookPromptBox');
+        if (box) copyTextSafe(box.value, 'Master Prompt para Gemini Notebook copiado.');
+
       } else if (action === 'toggle-oled-mode') {
         appState.settings.oledHighContrast = !appState.settings.oledHighContrast;
         saveAppState('OLED_MODE_TOGGLED', `Modo Alto Contraste OLED ${appState.settings.oledHighContrast ? 'activado' : 'desactivado'}`);
@@ -5835,6 +6303,7 @@ Sin optimismo ingenuo ni catastrofismo, y marcá qué supuestos estás usando en
         });
         saveAppState('SNAPSHOT_CREATED', 'Instantánea manual compactada en IndexedDB');
         renderConfiguracionView();
+      renderInstruccionesView();
         showToast('📸 Snapshot compactado creado en IndexedDB.');
       } else if (action === 'export-encrypted-vault') {
         exportEncryptedVaultP2P();
@@ -6696,6 +7165,7 @@ Sin optimismo ingenuo ni catastrofismo, y marcá qué supuestos estás usando en
       openLocalFirstIDB().then(() => {
         ensureDurableStoragePersistence(false);
         if (currentView === 'configuracion') renderConfiguracionView();
+      renderInstruccionesView();
       });
     });
   </script>

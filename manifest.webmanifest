@@ -1,0 +1,26 @@
+{
+  "name": "TS_SergDVD · Seguimiento de Hábitos, Objetivos y Equilibrio Vital",
+  "short_name": "TS_SergDVD",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#0f172a",
+  "theme_color": "#0f172a",
+  "description": "Plataforma ética local-first para seguimiento de hábitos, objetivos y equilibrio vital en Trabajo Social, Educación Popular y Multipotencialidad.",
+  "orientation": "any",
+  "categories": ["productivity", "lifestyle", "education"],
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
